@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure-Access Biometric</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --azul-principal: #0f172a;
+            --azul-secundario: #020617;
+            --cian: #06b6d4;
+            --cian-hover: #0891b2;
+            --blanco: #ffffff;
+            --gris: #94a3b8;
+            --fondo: #020617;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--fondo);
+            color: var(--gris);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--azul-principal);
+            padding: 15px 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--cian);
+            text-transform: uppercase;
+        }
+
+        .logo img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--blanco);
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--cian);
+        }
+
+        .btn {
+            background: var(--cian);
+            color: var(--blanco);
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--cian-hover);
+            transform: scale(1.05);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #020617, #0f172a, #020617);
+            color: var(--blanco);
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--cian);
+        }
+
+        .hero p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.2rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            padding: 60px 20px;
+            background: var(--azul-principal);
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .stat h2 {
+            color: var(--cian);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .stat p {
+            font-size: 1.1rem;
+            color: var(--gris);
+        }
+
+        .servicios {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .servicios h2 {
+            font-size: 2.5rem;
+            color: var(--cian);
+            margin-bottom: 20px;
+        }
+
+        .services-grid {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .service {
+            background: var(--azul-principal);
+            padding: 40px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: 0.3s;
+            border: 1px solid rgba(6,182,212,0.2);
+        }
+
+        .service:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(6,182,212,0.2);
+        }
+
+        .service i {
+            font-size: 3rem;
+            color: var(--cian);
+            margin-bottom: 20px;
+        }
+
+        .service h3 {
+            color: var(--cian);
+            margin-bottom: 15px;
+        }
+
+        footer {
+            background: var(--azul-secundario);
+            color: var(--blanco);
+            padding: 50px 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+        }
+
+        .footer-content h3 {
+            color: var(--cian);
+            margin-bottom: 15px;
+        }
+
+        .copy {
+            text-align: center;
+            margin-top: 30px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 15px 20px;
+            }
+
+            nav ul {
+                margin-top: 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo">
+        <img src="../vista/imagenes/logo.jpeg" alt="Logo">
+        <span>Secure-Access</span>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+    <a href="../vista/login.php" class="btn">Iniciar Sesión</a>
+</header>
+
+<section id="inicio" class="hero">
+    <h1>Seguridad Biométrica Inteligente</h1>
+    <p>Biometría inteligente que reconoce tu identidad y protege lo que más importa, brindándote acceso seguro y confianza en todo momento.</p>
+</section>
+
+<section class="stats">
+    <div class="stat">
+        <h2>99.9%</h2>
+        <p>Precisión Biométrica</p>
+    </div>
+    <div class="stat">
+        <h2>24/7</h2>
+        <p>Monitoreo Activo</p>
+    </div>
+    <div class="stat">
+        <h2>+500</h2>
+        <p>Usuarios Protegidos</p>
+    </div>
+    <div class="stat">
+        <h2>100%</h2>
+        <p>Acceso Seguro</p>
+    </div>
+</section>
+
+<section id="servicios" class="servicios">
+    <h2>Nuestros Servicios Biométricos</h2>
+    <p>Soluciones tecnológicas avanzadas para control de acceso y bioseguridad</p>
+    
+    <div class="services-grid">
+        <div class="service">
+            <i class="bi bi-fingerprint"></i>
+            <h3>Huella Dactilar</h3>
+            <p>Acceso seguro mediante reconocimiento de huella biométrica</p>
+        </div>
+
+        <div class="service">
+            <i class="bi bi-person-bounding-box"></i>
+            <h3>Reconocimiento Facial</h3>
+            <p>Identificación facial con inteligencia artificial avanzada</p>
+        </div>
+
+        <div class="service">
+            <i class="bi bi-eye"></i>
+            <h3>Escaneo de Iris</h3>
+            <p>Validación de identidad con tecnología de iris</p>
+        </div>
+
+        <div class="service">
+            <i class="bi bi-shield-lock"></i>
+            <h3>Control de Acceso</h3>
+            <p>Gestión de entradas y salidas en tiempo real</p>
+        </div>
+
+        <div class="service">
+            <i class="bi bi-camera-video"></i>
+            <h3>Monitoreo Inteligente</h3>
+            <p>Videovigilancia integrada con biometría</p>
+        </div>
+
+        <div class="service">
+            <i class="bi bi-phone"></i>
+            <h3>Acceso Móvil</h3>
+            <p>Control biométrico desde aplicación móvil</p>
+        </div>
+    </div>
+</section>
+
+<footer id="contacto">
+    <div class="footer-content">
+        <div>
+            <h3>Empresa</h3>
+            <p>Secure-Access Biometric<br>Sistemas de Seguridad Inteligente<br>Bogotá D.C., Colombia</p>
+        </div>
+
+        <div>
+            <h3>Contacto</h3>
+            <p><i class="bi bi-telephone"></i> +57 300 000 0000</p>
+            <p><i class="bi bi-envelope"></i> secureaccess@email.com</p>
+            <p><i class="bi bi-globe"></i> www.secureaccess.com</p>
+        </div>
+
+        <div>
+            <h3>Soporte</h3>
+            <p>Lunes a Viernes</p>
+            <p>8:00 AM - 6:00 PM</p>
+            <p>Soporte técnico 24/7</p>
+        </div>
+    </div>
+
+    <p class="copy">© 2026 Secure-Access Biometric - Todos los derechos reservados</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Postman paso a paso · CRUD Usuarios · Secure Access</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #08080e;
+    color: #ddd;
+    line-height: 1.7;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 40px 20px; }
+
+  .header {
+    text-align: center;
+    padding: 50px 0 30px;
+    border-bottom: 1px solid rgba(255, 107, 0, 0.15);
+    margin-bottom: 32px;
+  }
+  .header h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ff6b00, #ff9500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+  }
+  .header .sub { color: #888; font-size: 1rem; margin-top: 6px; }
+  .header .sub code { color: #ff9500; background: rgba(255,107,0,0.08); padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; }
+
+  .step {
+    background: #0c0c16;
+    border: 1px solid #18182a;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 5px; height: 100%;
+    border-radius: 16px 0 0 16px;
+    background: linear-gradient(180deg, #ff6b00, #ff9500);
+  }
+
+  .step .numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b00, #ff9500);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+
+  .step h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .step .info {
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 14px;
+  }
+
+  .step .label {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 4px;
+    margin: 8px 0 4px;
+  }
+  .lb-method { color: #fff; }
+  .lb-url { color: #00c8ff; background: rgba(0,200,255,0.08); }
+  .lb-header { color: #ffaa00; background: rgba(255,170,0,0.08); }
+  .lb-body { color: #00ff88; background: rgba(0,255,136,0.08); }
+  .lb-response { color: #ff66aa; background: rgba(255,102,170,0.08); }
+
+  .pill-method {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .post { background: rgba(73,204,144,0.15); color: #49cc90; }
+  .get { background: rgba(97,175,254,0.15); color: #61affe; }
+  .put { background: rgba(202,123,54,0.15); color: #fca130; }
+  .delete { background: rgba(249,62,62,0.15); color: #f93e3e; }
+
+  .code-box {
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    background: #0a0a14;
+    border: 1px solid #18182a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 8px 0;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.5;
+    color: #ccc;
+  }
+  .code-box .hl { color: #ff9500; }
+  .code-box .gr { color: #00ff88; }
+  .code-box .cy { color: #00c8ff; }
+  .code-box .rd { color: #ff4466; }
+
+  .screenshot-sim {
+    background: #0d0d1a;
+    border: 1px solid #1a1a2a;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 10px 0;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+  .screenshot-sim .bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1a1a2a;
+    margin-bottom: 10px;
+  }
+
+  .respuesta-ejemplo {
+    background: #0a0a14;
+    border: 1px solid #1a1a2a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 8px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: #00ff88;
+    overflow-x: auto;
+  }
+  .respuesta-ejemplo.error { color: #ff4466; border-color: rgba(255,68,102,0.2); }
+  .respuesta-ejemplo .comment { color: #666; font-style: italic; }
+
+  .tip-box {
+    border: 1px solid rgba(255, 200, 0, 0.1);
+    background: rgba(255, 200, 0, 0.03);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    font-size: 0.88rem;
+    color: #cca300;
+  }
+  .tip-box strong { color: #fff; }
+
+  .footer {
+    text-align: center;
+    padding: 30px 0;
+    border-top: 1px solid rgba(255,107,0,0.06);
+    margin-top: 30px;
+    color: #444;
+    font-size: 0.85rem;
+  }
+
+  table.simple {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 0.85rem;
+  }
+  table.simple th {
+    text-align: left;
+    padding: 8px 12px;
+    background: #0a0a14;
+    color: #ff9500;
+    border-bottom: 1px solid #1a1a2a;
+    font-weight: 600;
+  }
+  table.simple td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #12121e;
+    color: #bbb;
+  }
+
+  @media (max-width: 640px) {
+    .header h1 { font-size: 1.6rem; }
+    .container { padding: 20px 10px; }
+    .step { padding: 20px; }
+  }
+  @media print {
+    body { background: #fff; color: #222; }
+    .step { background: #f5f5f5; border-color: #ddd; }
+    .step h2 { color: #000; }
+    .code-box { background: #eee; border-color: #ccc; color: #333; }
+    .code-box .hl { color: #b33; } .code-box .gr { color: #080; } .code-box .cy { color: #058; } .code-box .rd { color: #c00; }
+    .respuesta-ejemplo { background: #eee; border-color: #ccc; color: #080; }
+    .respuesta-ejemplo.error { color: #c00; }
+    .screenshot-sim { background: #eee; border-color: #ccc; }
+    .screenshot-sim .bar { border-bottom-color: #ccc; }
+    .header h1 { -webkit-text-fill-color: #b33; }
+    .tip-box { border-color: #aa8800; background: #fffbe0; color: #554400; }
+    table.simple th { background: #eee; color: #b33; }
+    table.simple td { color: #333; border-bottom-color: #ddd; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>POSTMAN · PASO A PASO</h1>
+    <p class="sub">Aprende a hacer un CRUD completo de usuarios en <code>Secure Access</code></p>
+  </div>
+
+  <!-- QUÉ VAS A HACER -->
+  <div class="step" style="border-left-color:transparent;border-left:3px solid #444">
+    <p style="font-size:0.95rem;color:#999;text-align:center">
+      Vas a hacer 5 operaciones en orden:
+      <b style="color:#49cc90">CREAR</b> →
+      <b style="color:#61affe">CONSULTAR</b> →
+      <b style="color:#fca130">ACTUALIZAR</b> →
+      <b style="color:#61affe">CONSULTAR</b> →
+      <b style="color:#f93e3e">ELIMINAR</b> →
+      <b style="color:#61affe">CONSULTAR</b>
+    </p>
+  </div>
+
+  <!-- ============ PASO 1 ============ -->
+  <div class="step">
+    <div class="numero">1</div>
+    <h2>Iniciar sesión (Login)</h2>
+    <p class="info">Esto se hace una sola vez. El token dura 24 horas.</p>
+
+    <div class="screenshot-sim">
+      <div class="bar">
+        <span class="pill-method post">POST</span>
+        <span style="color:#ccc;font-family:'Courier New',monospace;font-size:0.85rem">http://localhost/proyecto_sena/api/auth/login</span>
+      </div>
+
+      <span class="label lb-header">HEADERS</span>
+      <div class="code-box"><span class="cy">Content-Type</span>: application/json</div>
+
+      <span class="label lb-body">BODY → raw → JSON</span>
+      <div class="code-box">{<br>  <span class="hl">"username"</span>: <span class="gr">"admin"</span>,<br>  <span class="hl">"password"</span>: <span class="gr">"admin123"</span><br>}</div>
+
+      <span class="label lb-response">RESPUESTA (si funciona)</span>
+      <div class="respuesta-ejemplo">{<br>  "status": "success",<br>  "data": {<br>    "token": <span class="comment">"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."</span>,<br>    "user": { "username": "admin", "role": "admin" }<br>  }<br>}</div>
+    </div>
+
+    <div class="tip-box">
+      <strong>IMPORTANTE:</strong> Copia el token (el texto largo que empieza con <code>eyJ0...</code>) y pégalo en un bloc de notas. Lo vas a usar en todos los pasos siguientes.
+    </div>
+  </div>
+
+  <!-- ============ PASO 2 ============ -->
+  <div class="step">
+    <div class="numero">2</div>
+    <h2>CREAR un usuario</h2>
+    <p class="info">Crea un usuario nuevo en el sistema. Solo administradores.</p>
+
+    <div class="screenshot-sim">
+      <div class="bar">
+        <span class="pill-method post">POST</span>
+        <span style="color:#ccc;font-family:'Courier New',monospace;font-size:0.85rem">http://localhost/proyecto_sena/api/usuarios/crear</span>
+      </div>
+
+      <span class="label lb-header">HEADERS</span>
+      <div class="code-box">
+        <span class="cy">Content-Type</span>: application/json<br>
+        <span class="cy">Authorization</span>: Bearer <span class="comment">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9... (el token que copiaste)</span>
+      </div>
+
+      <span class="label lb-body">BODY → raw → JSON</span>
+      <div class="code-box">{<br>  <span class="hl">"username"</span>: <span class="gr">"miusuario"</span>,<br>  <span class="hl">"password"</span>: <span class="gr">"123456"</span>,<br>  <span class="hl">"full_name"</span>: <span class="gr">"Mi Nombre"</span>,<br>  <span class="hl">"role"</span>: <span class="gr">"vigilante"</span><br>}</div>
+
+      <span class="label lb-response">RESPUESTA (si funciona, código 201)</span>
+      <div class="respuesta-ejemplo">{<br>  "status": "success",<br>  "message": "Usuario creado exitosamente",<br>  "data": { "id": 3, "username": "miusuario", ... }<br>}</div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Roles disponibles:</strong> <code>admin</code>, <code>supervisor</code>, <code>vigilante</code>. Si no pones rol, por defecto queda "vigilante".
+    </div>
+  </div>
+
+  <!-- ============ PASO 3 ============ -->
+  <div class="step">
+    <div class="numero">3</div>
+    <h2>CONSULTAR los usuarios</h2>
+    <p class="info">Dos formas: ver todos o ver uno solo.</p>
+
+    <div class="screenshot-sim">
+      <div class="bar">
+        <span class="pill-method get">GET</span>
+        <span style="color:#ccc;font-family:'Courier New',monospace;font-size:0.85rem">http://localhost/proyecto_sena/api/usuarios</span>
+      </div>
+
+      <span class="label lb-header">HEADERS (solo uno)</span>
+      <div class="code-box">
+        <span class="cy">Authorization</span>: Bearer <span class="comment">tu_token</span>
+      </div>
+
+      <span class="label lb-response">RESPUESTA</span>
+      <div class="respuesta-ejemplo">{<br>  "status": "success",<br>  "data": {<br>    "users": [ { "id": 1, "username": "admin", ... }, { "id": 3, "username": "miusuario", ... } ],<br>    "total": 3, "page": 1, "limit": 10<br>  }<br>}</div>
+    </div>
+
+    <p style="font-size:0.88rem;color:#999;margin-top:10px">
+      <b>Para ver un solo usuario:</b> Cambia el método a <span class="pill-method get">GET</span>
+      y la URL a <code>http://localhost/proyecto_sena/api/usuarios/3</code>
+      (donde 3 es el ID del usuario que quieres ver).
+    </p>
+  </div>
+
+  <!-- ============ PASO 4 ============ -->
+  <div class="step">
+    <div class="numero">4</div>
+    <h2>ACTUALIZAR un usuario</h2>
+    <p class="info">Modifica los datos de un usuario existente. Cambia solo los campos que quieras.</p>
+
+    <div class="screenshot-sim">
+      <div class="bar">
+        <span class="pill-method put">PUT</span>
+        <span style="color:#ccc;font-family:'Courier New',monospace;font-size:0.85rem">http://localhost/proyecto_sena/api/usuarios/actualizar/3</span>
+      </div>
+
+      <span class="label lb-header">HEADERS</span>
+      <div class="code-box">
+        <span class="cy">Content-Type</span>: application/json<br>
+        <span class="cy">Authorization</span>: Bearer <span class="comment">tu_token</span>
+      </div>
+
+      <span class="label lb-body">BODY → raw → JSON</span>
+      <div class="code-box">{<br>  <span class="hl">"full_name"</span>: <span class="gr">"Nombre Cambiado"</span>,<br>  <span class="hl">"role"</span>: <span class="gr">"supervisor"</span><br>}</div>
+
+      <span class="label lb-response">RESPUESTA</span>
+      <div class="respuesta-ejemplo">{<br>  "status": "success",<br>  "message": "Usuario actualizado exitosamente",<br>  "data": { "id": 3, "username": "miusuario", "full_name": "Nombre Cambiado", "role": "supervisor" }<br>}</div>
+    </div>
+
+    <div class="tip-box">
+      <strong>OJO:</strong> El método debe ser <b>PUT</b>, no GET. Si usas GET te va a dar error 404. Arriba al lado de la URL donde dice "GET" haz clic y cámbialo a "PUT".
+    </div>
+  </div>
+
+  <!-- ============ PASO 5 ============ -->
+  <div class="step">
+    <div class="numero">5</div>
+    <h2>Verificar el cambio</h2>
+    <p class="info">Vuelve a consultar para confirmar que el usuario se actualizó.</p>
+
+    <div class="screenshot-sim">
+      <div class="bar">
+        <span class="pill-method get">GET</span>
+        <span style="color:#ccc;font-family:'Courier New',monospace;font-size:0.85rem">http://localhost/proyecto_sena/api/usuarios/3</span>
+      </div>
+      <span class="label lb-header">HEADERS</span>
+      <div class="code-box">
+        <span class="cy">Authorization</span>: Bearer <span class="comment">tu_token</span>
+      </div>
+      <span class="label lb-response">RESPUESTA</span>
+      <div class="respuesta-ejemplo">{<br>  "status": "success",<br>  "data": { "id": 3, "username": "miusuario", "full_name": "Nombre Cambiado", "role": "supervisor" }<br>}</div>
+    </div>
+
+    <p style="font-size:0.88rem;color:#999;margin-top:10px">
+      Si ves el nombre y el rol actualizados, todo salió bien. Si no, revisa que el método sea GET y el ID correcto.
+    </p>
+  </div>
+
+  <!-- ============ PASO 6 ============ -->
+  <div class="step">
+    <div class="numero">6</div>
+    <h2>ELIMINAR un usuario</h2>
+    <p class="info">Borra un usuario del sistema. No te puedes eliminar a ti mismo.</p>
+
+    <div class="screenshot-sim">
+      <div class="bar">
+        <span class="pill-method delete">DELETE</span>
+        <span style="color:#ccc;font-family:'Courier New',monospace;font-size:0.85rem">http://localhost/proyecto_sena/api/usuarios/eliminar/3</span>
+      </div>
+
+      <span class="label lb-header">HEADERS (solo uno)</span>
+      <div class="code-box">
+        <span class="cy">Authorization</span>: Bearer <span class="comment">tu_token</span>
+      </div>
+
+      <span class="label lb-response">RESPUESTA</span>
+      <div class="respuesta-ejemplo">{<br>  "status": "success",<br>  "message": "Usuario eliminado exitosamente"<br>}</div>
+    </div>
+  </div>
+
+  <!-- ============ PASO 7 ============ -->
+  <div class="step">
+    <div class="numero">7</div>
+    <h2>Confirmar que se eliminó</h2>
+    <p class="info">Consulta la lista otra vez. El usuario borrado ya no debe aparecer.</p>
+
+    <div class="screenshot-sim">
+      <div class="bar">
+        <span class="pill-method get">GET</span>
+        <span style="color:#ccc;font-family:'Courier New',monospace;font-size:0.85rem">http://localhost/proyecto_sena/api/usuarios</span>
+      </div>
+      <span class="label lb-header">HEADERS</span>
+      <div class="code-box">
+        <span class="cy">Authorization</span>: Bearer <span class="comment">tu_token</span>
+      </div>
+      <span class="label lb-response">RESPUESTA (el usuario con ID 3 ya no aparece)</span>
+      <div class="respuesta-ejemplo">{<br>  "status": "success",<br>  "data": {<br>    "users": [ { "id": 1, "username": "admin" }, { "id": 2, "username": "operador1" } ],<br>    "total": 2<br>  }<br>}</div>
+    </div>
+  </div>
+
+  <!-- TABLA RESUMEN -->
+  <div class="step" style="border-left:3px solid #444">
+    <h2 style="margin-bottom:12px">Resumen rápido</h2>
+    <table class="simple">
+      <tr>
+        <th>Operación</th>
+        <th>Método</th>
+        <th>URL</th>
+        <th>Headers</th>
+      </tr>
+      <tr>
+        <td>Login</td>
+        <td><span class="pill-method post">POST</span></td>
+        <td><code>/api/auth/login</code></td>
+        <td>Content-Type</td>
+      </tr>
+      <tr>
+        <td>CREAR</td>
+        <td><span class="pill-method post">POST</span></td>
+        <td><code>/api/usuarios/crear</code></td>
+        <td>Content-Type + Bearer</td>
+      </tr>
+      <tr>
+        <td>CONSULTAR</td>
+        <td><span class="pill-method get">GET</span></td>
+        <td><code>/api/usuarios</code></td>
+        <td>Bearer</td>
+      </tr>
+      <tr>
+        <td>CONSULTAR 1</td>
+        <td><span class="pill-method get">GET</span></td>
+        <td><code>/api/usuarios/3</code></td>
+        <td>Bearer</td>
+      </tr>
+      <tr>
+        <td>ACTUALIZAR</td>
+        <td><span class="pill-method put">PUT</span></td>
+        <td><code>/api/usuarios/actualizar/3</code></td>
+        <td>Content-Type + Bearer</td>
+      </tr>
+      <tr>
+        <td>ELIMINAR</td>
+        <td><span class="pill-method delete">DELETE</span></td>
+        <td><code>/api/usuarios/eliminar/3</code></td>
+        <td>Bearer</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ERRORES COMUNES -->
+  <div class="step" style="border-left:3px solid #ff4466">
+    <h2 style="margin-bottom:10px">Errores comunes y cómo solucionarlos</h2>
+    <table class="simple">
+      <tr>
+        <th>Error</th>
+        <th>Qué significa</th>
+        <th>Solución</th>
+      </tr>
+      <tr>
+        <td><span style="color:#ff4466">401 Token inválido</span></td>
+        <td>El token no es correcto o no lo enviaste</td>
+        <td>Revisa el header Authorization. Haz Login otra vez</td>
+      </tr>
+      <tr>
+        <td><span style="color:#ff4466">401 Token no proporcionado</span></td>
+        <td>Falta el header Authorization</td>
+        <td>Agrega: <code>Authorization: Bearer tu_token</code></td>
+      </tr>
+      <tr>
+        <td><span style="color:#ff4466">404 Route not found</span></td>
+        <td>La URL o el método no existen</td>
+        <td>Revisa que escribiste bien la URL y el método (GET, POST, PUT, DELETE)</td>
+      </tr>
+      <tr>
+        <td><span style="color:#ff4466">404 GET: api/usuarios/actualizar/2</span></td>
+        <td>Usaste GET en vez de PUT</td>
+        <td>Cambia el método a PUT</td>
+      </tr>
+      <tr>
+        <td><span style="color:#ff4466">422 Error de validación</span></td>
+        <td>Faltan campos obligatorios</td>
+        <td>Revisa que username, password y full_name no estén vacíos</td>
+      </tr>
+    </table>
+
+    <div class="tip-box" style="margin-top:12px">
+      <strong>¿Todo falla?</strong> Borra la colección de Postman, vuelve a importar <code>Secure-Access-Postman.json</code> y empieza de nuevo desde el Login. A veces las variables se dañan.
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Secure Access · Proyecto SENA 2026 · Hecho por Juan, Ehidan y Krispi
+  </div>
+
+</div>
+</body>
+</html>

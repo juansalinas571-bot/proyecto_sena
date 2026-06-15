@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRUD Usuarios · Postman · Secure Access</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    line-height: 1.7;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+
+  .header {
+    text-align: center;
+    padding: 50px 0 30px;
+    border-bottom: 1px solid rgba(0, 200, 255, 0.15);
+    margin-bottom: 32px;
+  }
+  .header h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #00c8ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+  }
+  .header .sub {
+    color: #888;
+    font-size: 1rem;
+    margin-top: 6px;
+  }
+
+  /* INTRO */
+  .intro {
+    background: linear-gradient(135deg, #0d1a1a, #0a0f1a);
+    border: 1px solid rgba(0, 200, 255, 0.12);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .intro p {
+    font-size: 0.95rem;
+    color: #bbb;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .intro strong { color: #00c8ff; }
+
+  /* CARDS GRID */
+  .crud-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .crud-card {
+    background: #0e0e18;
+    border: 1px solid #1a1a2a;
+    border-radius: 14px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .crud-card:hover { border-color: #333; }
+  .crud-card .icono {
+    font-size: 1.8rem;
+    font-weight: 800;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .crud-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+  .crud-card .ruta {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .crud-card p {
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 8px;
+  }
+  .crud-card .ejemplo {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: #666;
+    background: #0a0a12;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #1a1a22;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* Colores por operación */
+  .card-crear    { border-left: 3px solid #00c8ff; }
+  .card-crear .icono  { background: rgba(0,200,255,0.1); color: #00c8ff; }
+  .card-crear .ruta   { background: rgba(0,200,255,0.08); color: #00c8ff; }
+
+  .card-consultar { border-left: 3px solid #00ff88; }
+  .card-consultar .icono { background: rgba(0,255,136,0.1); color: #00ff88; }
+  .card-consultar .ruta  { background: rgba(0,255,136,0.08); color: #00ff88; }
+
+  .card-actualizar { border-left: 3px solid #ffaa00; }
+  .card-actualizar .icono { background: rgba(255,170,0,0.1); color: #ffaa00; }
+  .card-actualizar .ruta  { background: rgba(255,170,0,0.08); color: #ffaa00; }
+
+  .card-eliminar { border-left: 3px solid #ff4466; }
+  .card-eliminar .icono { background: rgba(255,68,102,0.1); color: #ff4466; }
+  .card-eliminar .ruta  { background: rgba(255,68,102,0.08); color: #ff4466; }
+
+  /* PASOS */
+  .pasos {
+    background: #0e0e18;
+    border: 1px solid #1a1a2a;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .pasos h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pasos h2 .num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00c8ff, #00ff88);
+    color: #000;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+  }
+  .pasos ol {
+    list-style: none;
+    counter-reset: item;
+  }
+  .pasos ol li {
+    counter-increment: item;
+    padding: 8px 0 8px 36px;
+    position: relative;
+    font-size: 0.92rem;
+    color: #ccc;
+  }
+  .pasos ol li::before {
+    content: counter(item);
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #1a1a2a;
+    color: #00c8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .pasos ol li strong { color: #fff; }
+  .pasos .code {
+    font-family: 'Courier New', monospace;
+    background: #12121e;
+    border: 1px solid #1e1e2e;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 10px 0 10px 36px;
+    font-size: 0.8rem;
+    color: #00c8ff;
+    overflow-x: auto;
+  }
+
+  .tip {
+    background: rgba(255, 200, 0, 0.04);
+    border: 1px solid rgba(255, 200, 0, 0.12);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 0.88rem;
+    color: #ffd700;
+  }
+  .tip strong { color: #fff; }
+
+  .seguridad-box {
+    background: linear-gradient(135deg, #1a0a0a, #0e0e18);
+    border: 1px solid rgba(255, 68, 102, 0.15);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+  .seguridad-box h3 { color: #ff4466; margin-bottom: 8px; }
+  .seguridad-box p { font-size: 0.88rem; color: #bbb; }
+  .seguridad-box .code {
+    font-family: 'Courier New', monospace;
+    background: #12121e;
+    border: 1px solid #1e1e2e;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-size: 0.8rem;
+    color: #ff4466;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #444;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 640px) {
+    .header h1 { font-size: 1.8rem; }
+    .crud-grid { grid-template-columns: 1fr; }
+    .container { padding: 20px 12px; }
+  }
+  @media print {
+    body { background: #fff; color: #222; }
+    .crud-card { background: #f5f5f5; border-color: #ddd; }
+    .crud-card h3 { color: #000; }
+    .crud-card p { color: #333; }
+    .crud-card .ejemplo { background: #eee; border-color: #ccc; color: #0055aa; }
+    .pasos { background: #f5f5f5; border-color: #ddd; }
+    .pasos h2 { color: #000; }
+    .pasos ol li { color: #333; }
+    .pasos .code { background: #eee; border-color: #ccc; color: #0055aa; }
+    .intro { background: #eef5f5; border-color: #ccc; }
+    .intro p { color: #333; }
+    .header h1 { -webkit-text-fill-color: #005588; }
+    .tip { border-color: #aa8800; background: #fffbe0; color: #554400; }
+    .seguridad-box { background: #f5eeee; border-color: #cc8899; }
+    .seguridad-box .code { background: #eee; border-color: #ccc; color: #cc2244; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>CRUD USUARIOS</h1>
+    <p class="sub">Aprende a Crear, Consultar, Actualizar y Eliminar usuarios desde Postman</p>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>
+      Esta guía te explica paso a paso cómo hacer un <strong>CRUD completo de usuarios</strong>
+      usando la API de Secure Access desde Postman.<br>
+      Las operaciones están separadas en 4 archivos en <code>app/Controllers/Api/</code>:
+      <strong>Crear.php</strong>, <strong>Consultar.php</strong>, <strong>Actualizar.php</strong> y <strong>Eliminar.php</strong>.
+      Cada uno hace exactamente lo que su nombre dice.
+    </p>
+  </div>
+
+  <!-- CRUD CARDS -->
+  <div class="crud-grid">
+
+    <div class="crud-card card-crear">
+      <div class="icono">+</div>
+      <h3>Crear usuario</h3>
+      <span class="ruta">POST /api/usuarios/crear</span>
+      <p>Crea un nuevo usuario en el sistema. Solo administradores.</p>
+      <div class="ejemplo">{
+  "username": "operador1",
+  "password": "secreto123",
+  "full_name": "Operador Uno",
+  "role": "vigilante"
+}</div>
+    </div>
+
+    <div class="crud-card card-consultar">
+      <div class="icono">&#9783;</div>
+      <h3>Consultar usuarios</h3>
+      <span class="ruta">GET /api/usuarios</span>
+      <p>Lista todos los usuarios. También puedes ver uno solo:</p>
+      <span class="ruta" style="margin-top:4px;display:inline-block">GET /api/usuarios/2</span>
+      <p style="margin-top:6px">Solo administradores.</p>
+    </div>
+
+    <div class="crud-card card-actualizar">
+      <div class="icono">&#9998;</div>
+      <h3>Actualizar usuario</h3>
+      <span class="ruta">PUT /api/usuarios/actualizar/2</span>
+      <p>Actualiza los datos de un usuario existente. Solo administradores.</p>
+      <div class="ejemplo">{
+  "full_name": "Operador Modificado",
+  "role": "supervisor"
+}</div>
+    </div>
+
+    <div class="crud-card card-eliminar">
+      <div class="icono">&#10005;</div>
+      <h3>Eliminar usuario</h3>
+      <span class="ruta">DELETE /api/usuarios/eliminar/2</span>
+      <p>Elimina un usuario del sistema. No puedes eliminarte a ti mismo.</p>
+      <p style="margin-top:4px;color:#ff4466">Solo administradores.</p>
+    </div>
+
+  </div>
+
+  <!-- PASOS -->
+  <div class="pasos">
+    <h2><span class="num">1</span> Importar la colección en Postman</h2>
+    <ol>
+      <li>Abre Postman y haz clic en <strong>Import</strong> (arriba a la izquierda)</li>
+      <li>Selecciona el archivo <strong>docs/Secure-Access-Postman.json</strong></li>
+      <li>Listo, ya tienes la colección <strong>Secure Access API</strong> con todas las carpetas</li>
+    </ol>
+    <div class="tip">
+      Las variables como <code>{{base_url}}</code> y <code>{{token}}</code> ya vienen configuradas. No tienes que preocuparte por eso.
+    </div>
+  </div>
+
+  <div class="pasos">
+    <h2><span class="num">2</span> Iniciar sesión (Login)</h2>
+    <ol>
+      <li>En la colección, abre la carpeta <strong>1. Auth</strong> y selecciona <strong>Login</strong></li>
+      <li>Haz clic en <strong>Send</strong></li>
+      <li>Automáticamente el token se guarda en la variable <code>{{token}}</code></li>
+      <li>Ya puedes usar todos los demás endpoints</li>
+    </ol>
+    <div class="code">// Respuesta del Login<br>{<br>  "status": "success",<br>  "data": {<br>    "token": "eyJ0eXAiOiJKV1Qi...",<br>    "user": { "username": "admin", "role": "admin" }<br>  }<br>}</div>
+  </div>
+
+  <div class="pasos">
+    <h2><span class="num">3</span> Probar el CRUD de usuarios</h2>
+    <ol>
+      <li><strong>CREAR:</strong> Ve a <strong>2. Usuarios (CRUD) → CREAR usuario</strong>. Haz Send. Debe responder código <strong>201</strong>.</li>
+      <li><strong>CONSULTAR:</strong> Ve a <strong>CONSULTAR todos los usuarios</strong>. Haz Send. Verás la lista completa.</li>
+      <li><strong>CONSULTAR uno:</strong> Ve a <strong>CONSULTAR usuario por ID</strong>. Cambia el número si quieres.</li>
+      <li><strong>ACTUALIZAR:</strong> Ve a <strong>ACTUALIZAR usuario</strong>. El body ya viene con datos de ejemplo.</li>
+      <li><strong>ELIMINAR:</strong> Ve a <strong>ELIMINAR usuario</strong>. Cuidado: esta operación no se puede deshacer.</li>
+    </ol>
+    <div class="tip">
+      Después de crear un usuario, ve a CONSULTAR para verificar que apareció. Después de actualizarlo, vuelve a consultar para ver los cambios.
+    </div>
+  </div>
+
+  <!-- SEGURIDAD -->
+  <div class="seguridad-box">
+    <h3>Probar la seguridad</h3>
+    <p>¿Qué pasa si alguien intenta acceder sin autorización? La API responde con código <strong>401</strong>.</p>
+    <div class="code">// Sin token o con token inválido<br>{<br>  "status": "error",<br>  "message": "No autorizado"<br>}</div>
+    <p>En la carpeta <strong>4. Pruebas de Seguridad</strong> de la colección tienes dos ejemplos listos para probar.</p>
+  </div>
+
+  <!-- TIPS FINALES -->
+  <div class="pasos">
+    <h2><span class="num">&#9995;</span> Tips para la expo</h2>
+    <ol>
+      <li><strong>Orden sugerido:</strong> Login → CREAR → CONSULTAR (ver el nuevo) → ACTUALIZAR → CONSULTAR (ver cambios) → ELIMINAR → CONSULTAR (ya no aparece)</li>
+      <li>Si el token expiró (24h), solo vuelve a ejecutar <strong>Login</strong> y se renueva solo</li>
+      <li>Para la seguridad: muestra primero el CONSULTAR funcionando y luego el "Sin token" para que se vea la diferencia</li>
+      <li>Los datos de ejemplo vienen con <code>username: admin</code> y <code>password: admin123</code></li>
+    </ol>
+  </div>
+
+  <div class="footer">
+    Secure Access · Proyecto SENA 2026 · Hecho por Juan, Ehidan y Krispi
+  </div>
+
+</div>
+</body>
+</html>

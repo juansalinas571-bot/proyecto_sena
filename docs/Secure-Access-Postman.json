@@ -1,0 +1,184 @@
+{
+  "info": {
+    "name": "Secure Access API",
+    "description": "Colecci&oacute;n para probar la API REST de Secure Access.\n\n1. Primero ejecutar \"Login\" para obtener el token\n2. El token se asigna autom&aacute;ticamente\n3. Los dem&aacute;s endpoints ya lo usan",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost/proyecto_sena/api" },
+    { "key": "token", "value": "" },
+    { "key": "refresh_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const jsonData = pm.response.json();",
+                "if (jsonData.status === 'success') {",
+                "  pm.collectionVariables.set('token', jsonData.data.token);",
+                "  pm.collectionVariables.set('refresh_token', jsonData.data.refresh_token);",
+                "  console.log('Token asignado');",
+                "}"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Usuarios (español)",
+      "item": [
+        {
+          "name": "CREAR usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"operador1\",\n  \"password\": \"secreto123\",\n  \"full_name\": \"Operador Uno\",\n  \"role\": \"vigilante\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/usuarios/crear", "host": ["{{base_url}}"], "path": ["usuarios", "crear"] }
+          }
+        },
+        {
+          "name": "CONSULTAR todos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/usuarios", "host": ["{{base_url}}"], "path": ["usuarios"] }
+          }
+        },
+        {
+          "name": "CONSULTAR por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/usuarios/2", "host": ["{{base_url}}"], "path": ["usuarios", "2"] }
+          }
+        },
+        {
+          "name": "ACTUALIZAR",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Operador Modificado\",\n  \"role\": \"supervisor\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/usuarios/actualizar/2", "host": ["{{base_url}}"], "path": ["usuarios", "actualizar", "2"] }
+          }
+        },
+        {
+          "name": "ELIMINAR",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/usuarios/eliminar/2", "host": ["{{base_url}}"], "path": ["usuarios", "eliminar", "2"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Users (inglés, alias)",
+      "item": [
+        {
+          "name": "CREATE user",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"operator2\",\n  \"password\": \"secret123\",\n  \"full_name\": \"Operator Two\",\n  \"role\": \"vigilante\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/crear", "host": ["{{base_url}}"], "path": ["users", "crear"] }
+          }
+        },
+        {
+          "name": "LIST all users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/users", "host": ["{{base_url}}"], "path": ["users"] }
+          }
+        },
+        {
+          "name": "UPDATE user",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Operator Modified\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/users/actualizar/2", "host": ["{{base_url}}"], "path": ["users", "actualizar", "2"] }
+          }
+        },
+        {
+          "name": "DELETE user",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/users/eliminar/2", "host": ["{{base_url}}"], "path": ["users", "eliminar", "2"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Dashboard",
+      "item": [{
+        "name": "Estadísticas",
+        "request": {
+          "method": "GET",
+          "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+          "url": { "raw": "{{base_url}}/dashboard/stats", "host": ["{{base_url}}"], "path": ["dashboard", "stats"] }
+        }
+      }]
+    },
+    {
+      "name": "5. Pruebas de Seguridad",
+      "item": [
+        {
+          "name": "Sin token (debe dar 401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/usuarios", "host": ["{{base_url}}"], "path": ["usuarios"] }
+          }
+        },
+        {
+          "name": "Token inválido (debe dar 401)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer token-falso-123" }],
+            "url": { "raw": "{{base_url}}/usuarios", "host": ["{{base_url}}"], "path": ["usuarios"] }
+          }
+        }
+      ]
+    }
+  ]
+}

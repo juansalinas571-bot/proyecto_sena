@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Access · Exposición</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #08080e;
+    color: #ddd;
+    line-height: 1.7;
+  }
+  .container { max-width: 880px; margin: 0 auto; padding: 40px 24px; }
+
+  .header {
+    text-align: center;
+    padding: 60px 0 40px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+    margin-bottom: 36px;
+  }
+  .header h1 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #00ffff, #ff00ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -2px;
+  }
+  .header .sub { color: #777; font-size: 1.1rem; margin-top: 6px; }
+  .header .meta {
+    display: flex; justify-content: center; gap: 28px; margin-top: 18px; flex-wrap: wrap;
+  }
+  .header .meta span { font-size: 0.9rem; color: #666; display: flex; align-items: center; gap: 8px; }
+  .badge-expositor {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 14px; border-radius: 20px; font-weight: 600; font-size: 0.8rem;
+  }
+  .be-juan { background: rgba(0,255,255,0.08); color: #00ffff; border: 1px solid rgba(0,255,255,0.15); }
+  .be-ehidan { background: rgba(255,0,255,0.08); color: #ff00ff; border: 1px solid rgba(255,0,255,0.15); }
+  .be-krispi { background: rgba(0,255,136,0.08); color: #00ff88; border: 1px solid rgba(0,255,136,0.15); }
+
+  .timeline {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 36px;
+  }
+  .tl-item {
+    background: #0d0d18; border: 1px solid #1a1a28; border-radius: 12px;
+    padding: 16px; text-align: center;
+  }
+  .tl-item .bar { height: 4px; border-radius: 2px; margin: 10px auto 8px; width: 80%; }
+  .tl-item .name { font-weight: 700; font-size: 0.9rem; }
+  .tl-item .time { font-size: 0.75rem; color: #666; }
+  .tl-item .topic { font-size: 0.72rem; color: #555; margin-top: 4px; }
+
+  .section {
+    background: #0c0c16; border: 1px solid #18182a; border-radius: 18px;
+    padding: 32px; margin-bottom: 24px; position: relative;
+  }
+  .section::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 5px; height: 100%; border-radius: 18px 0 0 18px;
+  }
+  .sec-juan::before { background: linear-gradient(180deg, #00ffff, #0088cc); }
+  .sec-ehidan::before { background: linear-gradient(180deg, #ff00ff, #cc0088); }
+  .sec-krispi::before { background: linear-gradient(180deg, #00ff88, #00cc66); }
+
+  .section .tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    padding: 4px 14px; border-radius: 20px; margin-bottom: 14px;
+  }
+  .tag-juan { color: #00ffff; background: rgba(0,255,255,0.06); border: 1px solid rgba(0,255,255,0.12); }
+  .tag-ehidan { color: #ff00ff; background: rgba(255,0,255,0.06); border: 1px solid rgba(255,0,255,0.12); }
+  .tag-krispi { color: #00ff88; background: rgba(0,255,136,0.06); border: 1px solid rgba(0,255,136,0.12); }
+
+  .section h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; color: #fff; }
+  .section .subhead { font-size: 0.85rem; color: #666; margin-bottom: 18px; }
+  .section p { font-size: 0.95rem; color: #ccc; margin-bottom: 10px; }
+  .section p b { color: #fff; }
+  .section ul { list-style: none; margin: 4px 0 10px; }
+  .section ul li {
+    padding: 5px 0 5px 22px; position: relative; font-size: 0.93rem; color: #c0c0c0; margin-bottom: 2px;
+  }
+  .section ul li::before { content: '>'; position: absolute; left: 0; font-weight: 700; }
+  .sec-juan ul li::before { color: #00ffff; }
+  .sec-ehidan ul li::before { color: #ff00ff; }
+  .sec-krispi ul li::before { color: #00ff88; }
+  .section ul li b { color: #f0f0f0; }
+  .section .code-block {
+    background: #0a0a14; border: 1px solid #18182a; border-radius: 10px;
+    padding: 14px 18px; margin: 12px 0;
+    font-family: 'Courier New', monospace; font-size: 0.82rem; overflow-x: auto; line-height: 1.5;
+  }
+
+  .highlight-box { border-radius: 10px; padding: 16px 20px; margin: 12px 0; font-size: 0.9rem; }
+  .hb-juan { border: 1px solid rgba(0,255,255,0.1); background: rgba(0,255,255,0.03); color: #aaddff; }
+  .hb-ehidan { border: 1px solid rgba(255,0,255,0.1); background: rgba(255,0,255,0.03); color: #ffaadd; }
+  .hb-krispi { border: 1px solid rgba(0,255,136,0.1); background: rgba(0,255,136,0.03); color: #aaffcc; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+  .mini-card { background: #0e0e1a; border: 1px solid #1a1a2a; border-radius: 10px; padding: 16px; }
+  .mini-card h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 6px; }
+  .mini-card p { font-size: 0.88rem; color: #bbb; margin: 0; }
+
+  .section .speech {
+    background: rgba(255,255,255,0.02); border-left: 3px solid #444;
+    border-radius: 0 8px 8px 0; padding: 14px 20px; margin: 12px 0;
+    font-size: 0.95rem; color: #ddd; font-style: italic;
+  }
+  .sec-juan .speech { border-left-color: #00ffff; }
+  .sec-ehidan .speech { border-left-color: #ff00ff; }
+  .sec-krispi .speech { border-left-color: #00ff88; }
+
+  .divider { text-align: center; padding: 4px 0 18px; font-size: 1.2rem; color: #2a2a3a; letter-spacing: 6px; }
+
+  .footer {
+    text-align: center; padding: 36px 0;
+    border-top: 1px solid rgba(0,255,255,0.06); margin-top: 36px;
+    color: #444; font-size: 0.85rem;
+  }
+
+  @media (max-width: 640px) {
+    .header h1 { font-size: 2rem; }
+    .timeline { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .container { padding: 20px 12px; }
+    .section { padding: 22px; }
+  }
+  @media print {
+    body { background: #fff; color: #222; }
+    .section { background: #f5f5f5; border-color: #ddd; }
+    .section h2 { color: #000; }
+    .section p, .section ul li { color: #333; }
+    .section ul li b { color: #000; }
+    .code-block { background: #eee; border-color: #ccc; color: #0055aa; }
+    .mini-card { background: #eee; border-color: #ccc; }
+    .mini-card p { color: #333; }
+    .header h1 { -webkit-text-fill-color: #005588; }
+    .speech { border-left-color: #999 !important; background: #f0f0f0; color: #333 !important; }
+    .highlight-box { border-color: #bbb; background: #f0f0f0; color: #333 !important; }
+    .timeline .tl-item { background: #eee; border-color: #ccc; }
+    .tag-juan, .tag-ehidan, .tag-krispi { border-color: #999; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>SECURE ACCESS</h1>
+    <p class="sub">Sistema de Control de Acceso con Reconocimiento Facial</p>
+    <div class="meta">
+      <span><span class="badge-expositor be-juan">Juan · 5 min</span></span>
+      <span><span class="badge-expositor be-ehidan">Ehidan · 5 min</span></span>
+      <span><span class="badge-expositor be-krispi">Krispi · 5 min</span></span>
+      <span>15 min en total</span>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item" style="border-color:rgba(0,255,255,0.15)">
+      <div style="color:#00ffff" class="name">Juan</div>
+      <div class="bar" style="background:linear-gradient(90deg,#00ffff,#0088cc)"></div>
+      <div class="time">0:00 - 5:00</div>
+      <div class="topic">Qu&eacute; es · Tecnolog&iacute;as · C&oacute;mo est&aacute; hecho</div>
+    </div>
+    <div class="tl-item" style="border-color:rgba(255,0,255,0.15)">
+      <div style="color:#ff00ff" class="name">Ehidan</div>
+      <div class="bar" style="background:linear-gradient(90deg,#ff00ff,#cc0088)"></div>
+      <div class="time">5:00 - 10:00</div>
+      <div class="topic">Rutas · Seguridad · C&aacute;mara · Reportes</div>
+    </div>
+    <div class="tl-item" style="border-color:rgba(0,255,136,0.15)">
+      <div style="color:#00ff88" class="name">Krispi</div>
+      <div class="bar" style="background:linear-gradient(90deg,#00ff88,#00cc66)"></div>
+      <div class="time">10:00 - 15:00</div>
+      <div class="topic">Demo en vivo · Seguridad · Cierre</div>
+    </div>
+  </div>
+
+  <!-- ============ JUAN ============ -->
+  <div class="section sec-juan">
+    <div class="tag tag-juan">01 · Juan · 5 minutos</div>
+    <h2>¿Qué hicimos y por qué?</h2>
+    <div class="subhead">Contexto, tecnologías y organización del proyecto</div>
+
+    <div class="speech">
+      "Hola a todos, somos Juan, Ehidan y Krispi. Hoy venimos a presentarles <b>Secure Access</b>, un sistema que hicimos en el SENA para controlar el acceso a un lugar usando reconocimiento facial."
+    </div>
+
+    <p><b>El problema de la vida real:</b></p>
+    <p>Pensemos en un edificio, una bodega o una oficina donde necesita haber un vigilante revisando documentos uno por uno. Eso es demorado, la gente se cansa, se pueden equivocar y lo peor: no queda ningún registro de quién entró, a qué hora, o si alguien intentó entrar sin permiso.</p>
+
+    <p><b>¿Qué hicimos para solucionarlo?</b></p>
+    <p>Desarrollamos una aplicación web donde:</p>
+    <ul>
+      <li><b>Registramos</b> a las personas con su foto, nombre, documento y una contraseña</li>
+      <li>Cuando quieren entrar, solo se <b>ponen frente a la cámara</b> y el sistema los reconoce</li>
+      <li>Si la cámara falla, pueden <b>escribir su documento y contraseña</b> como respaldo</li>
+      <li><b>Todo queda guardado:</b> quién entró, a qué hora, si usó cámara o contraseña, desde qué computador</li>
+    </ul>
+
+    <div class="grid-2">
+      <div class="mini-card">
+        <h4>Tecnologías que usamos</h4>
+        <p><b>PHP 8.2</b> con CodeIgniter 4 para el servidor, <b>MySQL</b> para la base de datos.</p>
+      </div>
+      <div class="mini-card">
+        <h4>Del lado del navegador</h4>
+        <p><b>JavaScript puro</b> para manejar la cámara y el reconocimiento facial, y <b>CSS</b> con colores oscuros y neón para una interfaz moderna.</p>
+      </div>
+    </div>
+
+    <p><b>¿Y cómo está organizado el proyecto?</b></p>
+    <p>Usamos el patrón <b>MVC</b> (Modelo-Vista-Controlador), que básicamente es separar la lógica en tres partes: los <b>Controladores</b> reciben las peticiones y deciden qué hacer, los <b>Modelos</b> se encargan de hablar con la base de datos, y las <b>Vistas</b> son el HTML y JavaScript que ve el usuario en pantalla.</p>
+
+    <p>La <b>base de datos</b> tiene 4 tablas:</p>
+    <ul>
+      <li><b>users:</b> las personas que usan el sistema (admin, supervisor, vigilante)</li>
+      <li><b>faces:</b> los rostros registrados con nombre, documento y contraseña</li>
+      <li><b>access_logs:</b> el historial de cada intento de entrada (quién, cuándo, cómo, si entró o no)</li>
+      <li><b>migrations:</b> el control de versiones de la base de datos</li>
+    </ul>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ EHIDAN ============ -->
+  <div class="section sec-ehidan">
+    <div class="tag tag-ehidan">02 · Ehidan · 5 minutos</div>
+    <h2>¿Cómo funciona el sistema por dentro?</h2>
+    <div class="subhead">Rutas, seguridad, reconocimiento facial y reportes</div>
+
+    <div class="speech">
+      "Ahora les voy a explicar cómo se conecta todo esto internamente. Cómo hicimos para que cuando alguien hace clic en un botón, pase lo que tiene que pasar."
+    </div>
+
+    <p><b>Las rutas: el mapa del sistema</b></p>
+    <p>En el archivo <code>Routes.php</code> definimos todas las direcciones (rutas) del sistema. Es como un mapa que le dice al servidor qué hacer cuando alguien pide una página.</p>
+
+    <div class="code-block" style="color:#ff88cc">
+/login        → formulario de inicio de sesi&oacute;n
+/home         → panel principal con estad&iacute;sticas
+/faces        → registrar y ver rostros
+/camera       → control de acceso con c&aacute;mara
+/reports      → historial de accesos
+/users        → gesti&oacute;n de usuarios del sistema
+    </div>
+
+    <p><b>Los guardias de seguridad (Filters)</b></p>
+    <p>Tenemos filtros que revisan si alguien tiene permiso para entrar. El principal es el <b>AuthFilter</b>: revisa que hayas iniciado sesión en el navegador. Si no, te manda al login automáticamente.</p>
+
+    <p><b>¿Y cómo funciona lo del reconocimiento facial?</b></p>
+    <p>Usamos algo que se llama <b>dHash</b> (Difference Hash). Es una forma de convertir una foto en un código de 64 dígitos. Cuando alguien se pone frente a la cámara:</p>
+    <ul>
+      <li>El navegador toma la foto y la <b>reduce a 9x8 píxeles</b> en blanco y negro</li>
+      <li>Compara cada píxel con el que tiene al lado y genera un <b>código único de 64 bits</b></li>
+      <li>Ese código se manda al servidor para compararlo con los códigos guardados</li>
+      <li>Si dos códigos se parecen mucho (tienen pocas diferencias), es la misma persona</li>
+    </ul>
+    <p>Lo bueno es que <b>no necesitamos inteligencia artificial ni servicios de pago</b>. Todo se hace con JavaScript puro en el navegador.</p>
+
+    <p><b>Límite de intentos</b></p>
+    <p>Si alguien falla 3 veces seguidas con la cámara, el sistema le pide que ponga su documento y contraseña. Esto evita que estén probando fotos una y otra vez.</p>
+
+    <p><b>Los reportes</b></p>
+    <p>Todos los intentos de acceso quedan guardados en la base de datos con IP, fecha, estado (éxito o denegado) y método (cámara o contraseña). Después se pueden consultar en la sección Reportes, filtrando por fecha, por estado o buscando por nombre. Muestra 25 resultados por página para no saturar.</p>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+  <!-- ============ KRISPI ============ -->
+  <div class="section sec-krispi">
+    <div class="tag tag-krispi">03 · Krispi · 5 minutos</div>
+    <h2>Veámoslo en vivo</h2>
+    <div class="subhead">Demostración paso a paso y cierre</div>
+
+    <div class="speech">
+      "Bueno, ya les explicaron de qué se trata y cómo funciona por dentro. Ahora vamos a mostrar que todo esto sí sirve. Préndamoslo y veámoslo en acción."
+    </div>
+
+    <p><b>Paso 1: Iniciar sesión</b></p>
+    <p>Abro el navegador y voy a la página. Ingreso con <b>admin / admin123</b>. Aparece el dashboard con las estadísticas: cuántos rostros hay registrados, cuántos usuarios activos y los últimos registros.</p>
+
+    <p><b>Paso 2: Registrar una persona</b></p>
+    <p>Voy a "Registro de Rostros". Lleno el nombre, número de documento y una contraseña. Puedo <b>subir una foto</b> desde el computador o <b>tomarla con la cámara web</b>. Le doy guardar y ya queda registrado en la base de datos.</p>
+
+    <p><b>Paso 3: Control de acceso</b></p>
+    <p>Voy a "Control de Acceso". Selecciono la persona que quiero verificar, me pongo frente a la cámara y el sistema me reconoce. Cada intento queda registrado. Si fallo 3 veces, me aparece un formulario para poner documento y contraseña.</p>
+
+    <div class="grid-2">
+      <div class="mini-card">
+        <h4>Si la cámara funciona</h4>
+        <p>Sale un modal <b style="color:#00ff88">verde</b> con acceso exitoso. La persona queda registrada en el historial.</p>
+      </div>
+      <div class="mini-card">
+        <h4>Si falla</h4>
+        <p>Sale un modal <b style="color:#ff4466">rojo</b> de acceso denegado. Despu&eacute;s de 3 intentos, pide documento y contrase&ntilde;a.</p>
+      </div>
+    </div>
+
+    <p><b>Paso 4: Reportes</b></p>
+    <p>Voy a "Reportes" y puedo ver las estadísticas del día: cuántos accesos exitosos, cuántos denegados, y el total acumulado. Puedo filtrar por fecha, por estado o buscar a alguien por nombre o documento. La tabla se va pasando de página en página de a 25 registros.</p>
+
+    <p><b>Paso 5: Seguridad</b></p>
+    <ul>
+      <li>Si cierro el navegador y vuelvo a entrar, me pide <b>login otra vez</b></li>
+      <li>Un usuario con rol <b>vigilante no puede crear ni eliminar</b> rostros, solo verlos</li>
+      <li>El sistema <b>no deja borrar tu propio usuario</b> para que siempre haya al menos un administrador</li>
+    </ul>
+
+    <div class="highlight-box hb-krispi">
+      <b>Importante para la demo:</b> Si la c&aacute;mara no funciona o da problemas, no hay problema, usamos el m&eacute;todo de documento + contrase&ntilde;a que siempre sirve.
+    </div>
+
+    <p><b>Para cerrar:</b></p>
+    <div class="speech">
+      "Con este proyecto demostramos que se puede construir un sistema de control de acceso funcional usando solo tecnolog&iacute;as web que todos conocemos: <b>PHP, JavaScript y MySQL</b>. No necesitamos comprar equipos especiales ni pagar inteligencia artificial. El c&oacute;digo est&aacute; comentado l&iacute;nea por l&iacute;nea y la interfaz es moderna con colores ne&oacute;n oscuros."
+    </div>
+    <div style="text-align:center;margin-top:20px;font-size:1.1rem;font-weight:700;color:#fff">
+      "Muchas gracias por su atenci&oacute;n. ¿Alguna pregunta?"
+    </div>
+  </div>
+
+  <div class="footer">
+    Secure Access · Proyecto SENA 2026 · Juan · Ehidan · Krispi
+  </div>
+
+</div>
+</body>
+</html>
